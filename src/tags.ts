@@ -25,7 +25,20 @@ export class Tags {
     }
     // Strip '#' prefix — Obsidian's MetadataCache sometimes normalises
     // frontmatter tags with a leading '#' (e.g. "#my-tag" instead of "my-tag").
-    return fileTags.map((t) => (t.startsWith("#") ? t.slice(1) : t));
+    fileTags = fileTags.map((t) => (t.startsWith("#") ? t.slice(1) : t));
+
+    // Auto-tag: add the top-level folder name so projects can be filtered by
+    // folder without manual frontmatter tags (e.g. "Personal", "MUNK").
+    // Files at vault root (e.g. "Readme.md") have no folder tag.
+    const pathParts = file.path.split("/");
+    if (pathParts.length > 1) {
+      const folderTag = pathParts[0];
+      if (!fileTags.includes(folderTag)) {
+        fileTags.push(folderTag);
+      }
+    }
+
+    return fileTags;
   }
 
   public promptEditTags(file: TFile): void {
