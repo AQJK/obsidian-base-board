@@ -1,4 +1,4 @@
-import { Plugin, Notice, QueryController, TFile } from "obsidian";
+import { Plugin, Notice, QueryController, TFile, PluginSettingTab, App, Setting, ToggleComponent } from "obsidian";
 import { KanbanView } from "./kanban-view";
 import { sanitizeFilename } from "./constants";
 import { CreateBoardModal, BoardConfig } from "./modals";
@@ -10,10 +10,12 @@ export interface ColumnConfig {
 
 export interface PluginData {
   columnConfigs: Record<string, ColumnConfig>;
+  showTags: boolean;
 }
 
 const DEFAULT_DATA: PluginData = {
   columnConfigs: {},
+  showTags: false,
 };
 
 // ---------------------------------------------------------------------------
@@ -44,6 +46,9 @@ export default class BaseBoardPlugin extends Plugin {
         }).open();
       },
     });
+
+    // -- Settings tab ----------------------------------------------------------
+    this.addSettingTab(new BaseBoardSettingsTab(this.app, this));
   }
 
   onunload() {}
@@ -178,5 +183,41 @@ export default class BaseBoardPlugin extends Plugin {
 
   async savePluginData(): Promise<void> {
     await this.saveData(this.data_);
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Settings Tab
+// ---------------------------------------------------------------------------
+
+class BaseBoardSettingsTab extends PluginSettingTab {
+  private plugin: BaseBoardPlugin;
+
+  constructor(app: App, plugin: BaseBoardPlugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+
+  display(): void {
+    const { containerEl } = this;
+    containerEl.empty();
+
+    containerEl.createEl("h2", { text: "Base Board Settings" });
+    containerEl.createEl("p", {
+      text: "Configure how your Kanban boards look and behave.",
+      cls: "setting-item-description",
+    });
+
+    new Setting(containerEl)
+      .setName("Show tags on cards")
+      .setDesc(
+        "Display tag chips on cards and expose the \"Edit tags\" menu item. When disabled, tags are hidden from cards but the tag filter bar remains available for browsing and filtering.",
+      )
+      .addToggle((toggle: ToggleComponent) => {
+        toggle.setValue(this.plugin.data_.showTags).onChange(async (value) => {
+          this.plugin.data_.showTags = value;
+          await this.plugin.savePluginData();
+        });
+      });
   }
 }

@@ -13,7 +13,6 @@ import {
 } from "obsidian";
 import { KanbanView } from "./kanban-view";
 import { ORDER_PROPERTY, sanitizeFilename } from "./constants";
-import { relativeLuminance } from "./color-utils";
 import { CardDetailModal } from "./card-detail-modal";
 
 const SUFFIX_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -193,25 +192,18 @@ export class CardManager {
       menu.showAtMouseEvent(e);
     });
 
-    const tagContainerEl = cardEl.createDiv({
-      cls: "base-board-tag-container",
-    });
-    const file = this.view.app.vault.getAbstractFileByPath(filePath);
-    if (file instanceof TFile) {
-      const fileTags = this.view.tags.extractTagsFromFile(file);
-      for (const tag of fileTags) {
-        const tagEl = tagContainerEl.createSpan({
-          cls: "base-board-card-tag",
-          text: tag,
-        });
-        const color = this.view.tags.getColorForTag(tag);
-        if (color) {
-          tagEl.style.setProperty("--tag-color", color);
-          if (relativeLuminance(color) === "dark") {
-            tagEl.addClass("base-board-card-tag-light");
-          } else {
-            tagEl.addClass("base-board-card-tag-dark");
-          }
+    if (this.view.plugin.data_.showTags) {
+      const tagContainerEl = cardEl.createDiv({
+        cls: "base-board-tag-container",
+      });
+      const file = this.view.app.vault.getAbstractFileByPath(filePath);
+      if (file instanceof TFile) {
+        const fileTags = this.view.tags.extractTagsFromFile(file);
+        for (const tag of fileTags) {
+          tagContainerEl.createSpan({
+            cls: "base-board-card-tag base-board-card-tag--plain",
+            text: tag,
+          });
         }
       }
     }
@@ -338,15 +330,6 @@ export class CardManager {
     if (!file || !(file instanceof TFile)) return;
 
     const menu = new Menu();
-
-    menu.addItem((item) => {
-      item
-        .setTitle("Edit tags")
-        .setIcon("lucide-tags")
-        .onClick(() => {
-          this.view.tags.promptEditTags(file);
-        });
-    });
 
     menu.addItem((item) => {
       item

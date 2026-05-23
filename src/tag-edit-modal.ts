@@ -1,6 +1,5 @@
 import { App, Modal, Setting, setIcon } from "obsidian";
 import { Tags } from "./tags";
-import { relativeLuminance } from "./color-utils";
 
 export class TagEditModal extends Modal {
   private tags: string[];
@@ -100,16 +99,6 @@ export class TagEditModal extends Modal {
         cls: "base-board-tag-chip",
       });
       chipEl.createSpan({ text: tag, cls: "base-board-tag-chip-text" });
-
-      const color = this.tagsManager.getColorForTag(tag);
-      if (color) {
-        chipEl.style.setProperty("--tag-color", color);
-        if (relativeLuminance(color) === "dark") {
-          chipEl.addClass("base-board-tag-chip-light");
-        } else {
-          chipEl.addClass("base-board-tag-chip-dark");
-        }
-      }
 
       const removeBtn = chipEl.createSpan({
         cls: "base-board-tag-chip-remove",
