@@ -74,12 +74,7 @@ export class Tags {
       return;
     }
 
-    // Insert before the board
-    const boardEl = container.querySelector(".base-board-board");
-    if (!boardEl) return;
-
     const barEl = container.createDiv({ cls: "base-board-filter-bar" });
-    container.insertBefore(barEl, boardEl);
 
     const titleEl = barEl.createSpan({
       cls: "base-board-filter-title",

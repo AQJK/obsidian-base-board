@@ -819,3 +819,57 @@
     flex: 0 0 200px;
   }
 }
+
+/* ---- Toolbar ---- */
+
+.base-board-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  gap: 4px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  flex-shrink: 0;
+}
+
+.base-board-toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.base-board-toolbar-btn:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+/* ---- Collapsible filter container ---- */
+
+.base-board-filter-container {
+  display: none;
+  flex-shrink: 0;
+}
+
+.base-board-filter-container.is-visible {
+  display: block;
+}
+
+/* ---- Card folder indicator ---- */
+
+.base-board-card-folder {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background-color: var(--background-modifier-hover);
+  color: var(--text-faint);
+  display: inline-block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}

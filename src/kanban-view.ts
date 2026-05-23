@@ -7,6 +7,7 @@ import {
   QueryController,
   NullValue,
   setIcon,
+  setTooltip,
   TFile,
 } from "obsidian";
 import type BaseBoardPlugin from "./main";
@@ -350,7 +351,22 @@ export class KanbanView extends BasesView implements HoverParent {
       this.isFirstRender = false;
     }
 
-    this.tags.renderFilterBar(this.containerEl);
+    // --- Toolbar (filter toggle, hidden by default) ---
+    const toolbarEl = this.containerEl.createDiv({ cls: "base-board-toolbar" });
+    const filterToggle = toolbarEl.createDiv({
+      cls: "base-board-toolbar-btn",
+    });
+    setIcon(filterToggle, "lucide-filter");
+    setTooltip(filterToggle, "Toggle tag filter bar");
+
+    const filterContainer = this.containerEl.createDiv({
+      cls: "base-board-filter-container",
+    });
+    this.tags.renderFilterBar(filterContainer);
+
+    filterToggle.addEventListener("click", () => {
+      filterContainer.classList.toggle("is-visible");
+    });
 
     columns.forEach((columnName, idx) => {
       const group = this.getGroupForColumn(columnName);

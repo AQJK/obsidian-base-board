@@ -100,6 +100,13 @@ export class CardManager {
     cardEl.dataset.filePath = filePath;
     cardEl.dataset.columnName = columnName;
 
+    // Folder indicator (always visible — "Personal", "MUNK", etc.)
+    const pathParts = filePath.split("/");
+    if (pathParts.length > 1) {
+      const folderPill = cardEl.createDiv({ cls: "base-board-card-folder" });
+      folderPill.textContent = pathParts[0];
+    }
+
     // Open the note on click; guard against accidental clicks after a drag
     let dragging = false;
     cardEl.addEventListener("dragstart", () => {
